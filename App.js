@@ -8,7 +8,10 @@ import Toolbar from './components/Toolbar';
 import Grid from './components/Grid';
 import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
- 
+import KeyboardState from './components/KeyboardState';
+import MeasureLayout from './components/MeasureLayout';
+import MessagingContainer, { INPUT_METHOD } from './components/MessagingContainer';
+
 export default class App extends React.Component {
   state = {
     messages: [
@@ -22,6 +25,7 @@ export default class App extends React.Component {
     ],
     fullscreenImageId: null,
     isInputFocused: false,
+    inputMethod: INPUT_METHOD.NONE,
   };
 
   componentWillMount() {
@@ -52,7 +56,7 @@ export default class App extends React.Component {
   handlePressToolbarCamera = async () => {
     const {messages} = this.state;
 
-    let {status} = await ImagePicker.launchImageLibraryAsync({
+    let status = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
@@ -60,7 +64,7 @@ export default class App extends React.Component {
     });
 
     this.setState({
-      messages: [createImageMessage(uri), ...messages],
+      messages: [createImageMessage(status.uri), ...messages],
     });
   }
 
