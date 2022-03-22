@@ -1,8 +1,8 @@
-import { Image, StyleSheet, TouchableOpacity, PermissionsAndroid } from 'react-native';
-import CameraRoll from '@react-native-community/cameraroll';
-import * as Permissions from "expo-permissions";
+import { CameraRoll, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Permissions } from 'expo';
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import Grid from './Grid';
 
 const keyExtractor = ({ uri }) => uri;

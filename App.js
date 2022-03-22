@@ -6,7 +6,9 @@ import MessageList from './components/MessageList';
 import Status from './components/Status';
 import Toolbar from './components/Toolbar';
 import Grid from './components/Grid';
-
+import * as Location from "expo-location";
+import * as ImagePicker from "expo-image-picker";
+ 
 export default class App extends React.Component {
   state = {
     messages: [
@@ -36,27 +38,42 @@ export default class App extends React.Component {
         return false;
       },
     );
+    
   }
 
-  componentWillUnmount() {
+  UNSAFE_componentWillUnmount() {
     this.subscription.remove();
   }
 
   dismissFullscreenImage = () => {
     this.setState({ fullscreenImageId: null });
   };
+  
+  handlePressToolbarCamera = async () => {
+    const {messages} = this.state;
 
-  handlePressToolbarLocation = () => {
+    let {status} = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    this.setState({
+      messages: [createImageMessage(uri), ...messages],
+    });
+  }
+
+  handlePressToolbarLocation = async () => {
     const { messages } = this.state;
-   // geolocation.requestAuthorization();
-    //Geolocation.setRNConfiguration(config);
-   // geolocation.getCurrentPosition(
-     // geo_success,
-     // [geo_error],
-     // [geo_options]
-   // );
-   /* Geolocation.getCurrentPosition(position => {
-      const { coords: { latitude, longitude } } = position;
+
+    let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+      const userLocation =   await Location.getCurrentPositionAsync({});
+      const { coords: { latitude, longitude } } = userLocation;
 
       this.setState({
         messages: [
@@ -67,8 +84,8 @@ export default class App extends React.Component {
           ...messages,
         ],
       });
-    });*/
-  };
+
+  }
 
   handlePressImage = uri => {
     const { messages } = this.state;
